@@ -5,7 +5,7 @@ const app = express();
 const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
 /**
- * @param {(req: express.Request, res: express.Response) => any} callback
+ * @param {(req: express.Request, res: express.Response) => Promise<void>} callback
  * @returns {express.RequestHandler}
  */
 const asyncWrap = (callback) => (req, res, next) => callback(req, res).catch(next);
