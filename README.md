@@ -1,3 +1,8 @@
+Project status:
+
+-   🛑 Not actively maintained
+-   🔒 Not looking for code contributions from other developers
+
 # ical-vacation-filter
 
 Take an Outlook iCal feed and keep only the out-of-office events.
