@@ -1,0 +1,17 @@
+{
+  "name": "ical-vacation-filter",
+  "version": "0.0.1",
+  "description": "Take an Outlook iCal feed and keep only the out-of-office events",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "express": "^4.18.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.16"
+  }
+}
