@@ -15,10 +15,7 @@ Note: If you struggle to get your favourite calendar software to subscribe to th
 
 ## Suggestions for improvement
 
--   Validate that source is provided
--   Validate that source actually returns an iCal feed and not something else
 -   Add timeout and potentially max source feed size
--   Provide nice error messages in case of timeout, invalid source URL, ...
 -   Add frontend that turns source feed URL into copyable filtered feed URL
 -   Process source feed as a stream so we can filter huge iCal feeds with minimal memory overhead
 -   Add automated tests
