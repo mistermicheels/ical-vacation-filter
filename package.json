@@ -1,6 +1,9 @@
 {
   "name": "ical-vacation-filter",
   "version": "0.0.1",
+  "engines": {
+    "node": "16.x"
+  },
   "description": "Take an Outlook iCal feed and keep only the out-of-office events",
   "main": "src/index.js",
   "scripts": {
