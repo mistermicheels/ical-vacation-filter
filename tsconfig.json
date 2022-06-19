@@ -1,5 +1,4 @@
 {
-    // adding/removing/changing tsconfig files might require an editor restart
     "compilerOptions": {
         "noEmit": true,
         "allowJs": true,

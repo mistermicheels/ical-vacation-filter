@@ -3,6 +3,7 @@ const axios = require("axios").default;
 const { BadRequestError } = require("./error/BadRequestError");
 
 const SOURCE_TIMEOUT_SECONDS = 60;
+const SOURCE_TIMEOUT_MILLISECONDS = SOURCE_TIMEOUT_SECONDS * 1000;
 
 /**
  * @param {any} sourceData
@@ -27,7 +28,7 @@ const checkSourceIsIcalFeed = (sourceData, sourceHeaders, sourceUrl) => {
  */
 const getSourceDataAndHeaders = async (sourceUrl) => {
     /** @type {import("axios").AxiosRequestConfig} */
-    const axiosOptions = { timeout: SOURCE_TIMEOUT_SECONDS * 1000 };
+    const axiosOptions = { timeout: SOURCE_TIMEOUT_MILLISECONDS, responseType: "stream" };
 
     const sourceResponse = await axios.get(sourceUrl, axiosOptions).catch((error) => {
         if (error.code === "ECONNABORTED") {
