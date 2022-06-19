@@ -19,20 +19,22 @@ async function* filterEventsAsyncGenerator(sourceData) {
     for await (const chunk of sourceData) {
         dataToBeProcessed = dataToBeProcessed + chunk;
 
-        while (dataToBeProcessed.search(EVENT_END_REGEX) >= 0) {
-            const indexEventStart = dataToBeProcessed.search(EVENT_START_REGEX);
-            const indexEventEnd = dataToBeProcessed.search(EVENT_END_REGEX);
-            const fullEvent = dataToBeProcessed.substring(indexEventStart, indexEventEnd);
+        let indexNextEventEnd = dataToBeProcessed.search(EVENT_END_REGEX);
+
+        while (indexNextEventEnd >= 0) {
+            const indexNextEventStart = dataToBeProcessed.search(EVENT_START_REGEX);
+            const fullEvent = dataToBeProcessed.substring(indexNextEventStart, indexNextEventEnd);
 
             // any data before the first event or between events needs to be kept
-            const dataBeforeEvent = dataToBeProcessed.substring(0, indexEventStart);
+            const dataBeforeEvent = dataToBeProcessed.substring(0, indexNextEventStart);
             yield dataBeforeEvent;
 
             if (IS_EVENT_OUT_OF_OFFICE_REGEX.test(fullEvent)) {
                 yield fullEvent;
             }
 
-            dataToBeProcessed = dataToBeProcessed.substring(indexEventEnd);
+            dataToBeProcessed = dataToBeProcessed.substring(indexNextEventEnd);
+            indexNextEventEnd = dataToBeProcessed.search(EVENT_END_REGEX);
         }
     }
 
