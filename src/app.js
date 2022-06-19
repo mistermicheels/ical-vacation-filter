@@ -26,7 +26,7 @@ app.get(
         const { sourceData, sourceHeaders } = await getSourceDataAndHeaders(sourceUrl);
         const filteredData = filterEvents(sourceData);
         res.header(sourceHeaders);
-        res.send(filteredData);
+        filteredData.pipe(res);
     })
 );
 

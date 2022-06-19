@@ -6,25 +6,20 @@ const SOURCE_TIMEOUT_SECONDS = 60;
 const SOURCE_TIMEOUT_MILLISECONDS = SOURCE_TIMEOUT_SECONDS * 1000;
 
 /**
- * @param {any} sourceData
  * @param {import("axios").AxiosResponseHeaders} sourceHeaders
  * @param {string} sourceUrl
  */
-const checkSourceIsIcalFeed = (sourceData, sourceHeaders, sourceUrl) => {
+const checkSourceIsIcalFeed = (sourceHeaders, sourceUrl) => {
     const sourceContentType = sourceHeaders["content-type"];
-    const isContentTypeCorrect = sourceContentType?.startsWith("text/calendar");
 
-    const isSourceDataString = typeof sourceData === "string";
-    const isDataIcalFormat = isSourceDataString && sourceData.startsWith("BEGIN:VCALENDAR");
-
-    if (!isContentTypeCorrect || !isDataIcalFormat) {
+    if (!sourceContentType?.startsWith("text/calendar")) {
         throw new BadRequestError(`Source URL ${sourceUrl} does not seem to return an iCal feed`);
     }
 };
 
 /**
  * @param {string} sourceUrl
- * @returns {Promise<{ sourceData: string, sourceHeaders: Record<string, any> }>}
+ * @returns {Promise<{ sourceData: NodeJS.ReadableStream, sourceHeaders: Record<string, any> }>}
  */
 const getSourceDataAndHeaders = async (sourceUrl) => {
     /** @type {import("axios").AxiosRequestConfig} */
@@ -41,7 +36,7 @@ const getSourceDataAndHeaders = async (sourceUrl) => {
     });
 
     const { data: sourceData, headers: sourceHeaders } = sourceResponse;
-    checkSourceIsIcalFeed(sourceData, sourceHeaders, sourceUrl);
+    checkSourceIsIcalFeed(sourceHeaders, sourceUrl);
     return { sourceData, sourceHeaders };
 };
 
