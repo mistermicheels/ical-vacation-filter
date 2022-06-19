@@ -20,7 +20,7 @@ app.get(
         const sourceUrl = req.query.source;
 
         if (!sourceUrl || typeof sourceUrl !== "string") {
-            throw new BadRequestError("Source URL mut be provided as 'source' query parameter");
+            throw new BadRequestError("Source URL must be provided as 'source' query parameter");
         }
 
         const { sourceData, sourceHeaders } = await getSourceDataAndHeaders(sourceUrl);
