@@ -19,8 +19,19 @@ const asyncWrap = (callback) => (req, res, next) => callback(req, res).catch(nex
  * @returns {Promise<{ sourceData: string, sourceHeaders: Record<string, any> }>}
  */
 const getSourceDataAndHeaders = async (sourceUrl) => {
-    const sourceResponse = await axios.get(sourceUrl).catch(() => {
-        throw new BadRequestError(`Unable to get data from URL ${sourceUrl}`);
+    const sourceTimeoutSeconds = 60;
+
+    /** @type {import("axios").AxiosRequestConfig} */
+    const axiosOptions = { timeout: sourceTimeoutSeconds * 1000 };
+
+    const sourceResponse = await axios.get(sourceUrl, axiosOptions).catch((error) => {
+        if (error.code === "ECONNABORTED") {
+            throw new BadRequestError(
+                `URL ${sourceUrl} took more than ${sourceTimeoutSeconds} seconds to respond`
+            );
+        } else {
+            throw new BadRequestError(`Unable to get data from URL ${sourceUrl}`);
+        }
     });
 
     const sourceHeaders = sourceResponse.headers;

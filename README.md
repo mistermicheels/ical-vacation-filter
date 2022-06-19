@@ -15,7 +15,6 @@ Note: If you struggle to get your favourite calendar software to subscribe to th
 
 ## Suggestions for improvement
 
--   Add timeout and potentially max source feed size
 -   Add frontend that turns source feed URL into copyable filtered feed URL
 -   Process source feed as a stream so we can filter huge iCal feeds with minimal memory overhead
 -   Add automated tests
