@@ -9,14 +9,14 @@ const app = express();
 app.set("view engine", "pug");
 
 /**
- * @param {(req: express.Request, res: express.Response) => Promise<void>} callback
+ * @param {(req: express.Request, res: express.Response, next: express.NextFunction) => Promise<void>} callback
  * @returns {express.RequestHandler}
  */
-const asyncWrap = (callback) => (req, res, next) => callback(req, res).catch(next);
+const asyncWrap = (callback) => (req, res, next) => callback(req, res, next).catch(next);
 
 app.get(
     "/filter",
-    asyncWrap(async (req, res) => {
+    asyncWrap(async (req, res, next) => {
         const sourceUrl = req.query.source;
 
         if (!sourceUrl || typeof sourceUrl !== "string") {
@@ -25,6 +25,11 @@ app.get(
 
         const { sourceData, sourceHeaders } = await getSourceDataAndHeaders(sourceUrl);
         const filteredData = filterEvents(sourceData);
+
+        filteredData.on("error", (err) => {
+            return next(err);
+        });
+
         res.header(sourceHeaders);
         filteredData.pipe(res);
     })
