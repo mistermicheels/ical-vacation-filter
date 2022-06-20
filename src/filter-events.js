@@ -10,36 +10,55 @@ const EVENT_END_REGEX = /(?<=^END:VEVENT$)/m;
 const IS_EVENT_OUT_OF_OFFICE_REGEX = /^X-MICROSOFT-CDO-BUSYSTATUS:OOF$/m;
 
 /**
+ * @param {string} unprocessedReceivedData
+ * @returns {{ startIndex: number, endIndex: number, eventData: string }}
+ */
+const getNextCompleteEvent = (unprocessedReceivedData) => {
+    const indexNextEventEnd = unprocessedReceivedData.search(EVENT_END_REGEX);
+
+    if (indexNextEventEnd < 0) {
+        // data contains either no event or only a partial event
+        return undefined;
+    }
+
+    // we only process complete events, so we can assume there is an event start before the event end
+    const startIndex = unprocessedReceivedData.search(EVENT_START_REGEX);
+    const endIndex = indexNextEventEnd;
+    const eventData = unprocessedReceivedData.substring(startIndex, endIndex);
+    return { startIndex, endIndex, eventData };
+};
+
+/**
  * @param {NodeJS.ReadableStream} sourceData
  */
 async function* filterEventsAsyncGenerator(sourceData) {
-    let dataToBeProcessed = "";
+    let unprocessedReceivedData = "";
 
     // use async iterator syntax to iterate through the source stream
     for await (const chunk of sourceData) {
-        dataToBeProcessed = dataToBeProcessed + chunk;
+        unprocessedReceivedData = unprocessedReceivedData + chunk;
 
-        let indexNextEventEnd = dataToBeProcessed.search(EVENT_END_REGEX);
+        let nextCompleteEvent = getNextCompleteEvent(unprocessedReceivedData);
 
-        while (indexNextEventEnd >= 0) {
-            const indexNextEventStart = dataToBeProcessed.search(EVENT_START_REGEX);
-            const fullEvent = dataToBeProcessed.substring(indexNextEventStart, indexNextEventEnd);
+        while (nextCompleteEvent) {
+            const { startIndex, endIndex, eventData } = nextCompleteEvent;
 
             // any data before the first event or between events needs to be kept
-            const dataBeforeEvent = dataToBeProcessed.substring(0, indexNextEventStart);
+            const dataBeforeEvent = unprocessedReceivedData.substring(0, startIndex);
             yield dataBeforeEvent;
 
-            if (IS_EVENT_OUT_OF_OFFICE_REGEX.test(fullEvent)) {
-                yield fullEvent;
+            if (IS_EVENT_OUT_OF_OFFICE_REGEX.test(eventData)) {
+                yield eventData;
             }
 
-            dataToBeProcessed = dataToBeProcessed.substring(indexNextEventEnd);
-            indexNextEventEnd = dataToBeProcessed.search(EVENT_END_REGEX);
+            const dataAfterEvent = unprocessedReceivedData.substring(endIndex);
+            unprocessedReceivedData = dataAfterEvent;
+            nextCompleteEvent = getNextCompleteEvent(unprocessedReceivedData);
         }
     }
 
     // any data after the last event needs to be kept
-    yield dataToBeProcessed;
+    yield unprocessedReceivedData;
 }
 
 /**
