@@ -11,7 +11,7 @@ const IS_EVENT_OUT_OF_OFFICE_REGEX = /^X-MICROSOFT-CDO-BUSYSTATUS:OOF$/m;
 
 /**
  * @param {string} unprocessedReceivedData
- * @returns {{ startIndex: number, endIndex: number, eventData: string }}
+ * @returns {{ eventData: string, dataBeforeEvent: string, dataAfterEvent: string }}
  */
 const getNextCompleteEvent = (unprocessedReceivedData) => {
     const indexNextEventEnd = unprocessedReceivedData.search(EVENT_END_REGEX);
@@ -25,8 +25,16 @@ const getNextCompleteEvent = (unprocessedReceivedData) => {
     const startIndex = unprocessedReceivedData.search(EVENT_START_REGEX);
     const endIndex = indexNextEventEnd;
     const eventData = unprocessedReceivedData.substring(startIndex, endIndex);
-    return { startIndex, endIndex, eventData };
+    const dataBeforeEvent = unprocessedReceivedData.substring(0, startIndex);
+    const dataAfterEvent = unprocessedReceivedData.substring(endIndex);
+    return { eventData, dataBeforeEvent, dataAfterEvent };
 };
+
+/**
+ * @param {string} eventData
+ * @returns {boolean}
+ */
+const isOutOfOfficeEvent = (eventData) => IS_EVENT_OUT_OF_OFFICE_REGEX.test(eventData);
 
 /**
  * @param {NodeJS.ReadableStream} sourceData
@@ -41,17 +49,15 @@ async function* filterEventsAsyncGenerator(sourceData) {
         let nextCompleteEvent = getNextCompleteEvent(unprocessedReceivedData);
 
         while (nextCompleteEvent) {
-            const { startIndex, endIndex, eventData } = nextCompleteEvent;
+            const { eventData, dataBeforeEvent, dataAfterEvent } = nextCompleteEvent;
 
             // any data before the first event or between events needs to be kept
-            const dataBeforeEvent = unprocessedReceivedData.substring(0, startIndex);
             yield dataBeforeEvent;
 
-            if (IS_EVENT_OUT_OF_OFFICE_REGEX.test(eventData)) {
+            if (isOutOfOfficeEvent(eventData)) {
                 yield eventData;
             }
 
-            const dataAfterEvent = unprocessedReceivedData.substring(endIndex);
             unprocessedReceivedData = dataAfterEvent;
             nextCompleteEvent = getNextCompleteEvent(unprocessedReceivedData);
         }
