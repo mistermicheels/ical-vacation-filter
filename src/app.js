@@ -3,7 +3,8 @@ const express = require("express");
 const { BadRequestError } = require("./error/BadRequestError");
 
 const { getSourceDataAndHeaders } = require("./source-data");
-const { filterEvents } = require("./filter-events");
+const { inspectFirstChunk } = require("./stream-utils");
+const { checkFirstChunk, filterEvents } = require("./process-ical");
 
 const app = express();
 app.set("view engine", "pug");
@@ -24,7 +25,9 @@ app.get(
         }
 
         const { sourceData, sourceHeaders } = await getSourceDataAndHeaders(sourceUrl);
-        const filteredData = filterEvents(sourceData);
+        const { firstChunk, reconstructedFullStream } = await inspectFirstChunk(sourceData);
+        checkFirstChunk(firstChunk);
+        const filteredData = filterEvents(reconstructedFullStream);
 
         filteredData.on("error", (err) => {
             return next(err);

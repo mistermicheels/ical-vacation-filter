@@ -21,6 +21,7 @@ The code is not too interesting, except for the stream processing part:
 
 -   We get the source data from `axios` as a stream
 -   We use async iterator syntax to iterate over the source stream
+-   We inspect the first chunk of the stream to perform sanity checks _before_ setting response headers
 -   We use an async generator function to create the resulting filtered stream
 
 The use of streams allows us to keep memory overhead as small as possible when processing iCal content. It also allows us to reject non-iCal content without first having to download it. Meanwhile, the async iterator syntax and async generator function allow us to keep the data filtering code relatively simple and readable.

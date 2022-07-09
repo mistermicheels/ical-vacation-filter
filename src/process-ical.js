@@ -1,5 +1,9 @@
 const stream = require("stream");
 
+const { BadRequestError } = require("./error/BadRequestError");
+
+const EXPECTED_CALENDAR_START_TEXT = "BEGIN:VCALENDAR";
+
 // capture line breaks so the result has same line break style as the source.
 // iCal feed does not start with BEGIN:VEVENT, so there will be a line break before the first BEGIN:VEVENT
 const EVENT_START_REGEX = /\r?\nBEGIN:VEVENT$/m;
@@ -8,6 +12,15 @@ const EVENT_START_REGEX = /\r?\nBEGIN:VEVENT$/m;
 const EVENT_END_REGEX = /(?<=^END:VEVENT$)/m;
 
 const IS_EVENT_OUT_OF_OFFICE_REGEX = /^X-MICROSOFT-CDO-BUSYSTATUS:OOF$/m;
+
+/**
+ * @param {string | Buffer} chunk
+ */
+const checkFirstChunk = (chunk) => {
+    if (!chunk.toString().startsWith(EXPECTED_CALENDAR_START_TEXT)) {
+        throw new BadRequestError("Invalid iCal data");
+    }
+};
 
 /**
  * @param {string} unprocessedReceivedData
@@ -75,4 +88,4 @@ const filterEvents = (sourceData) => {
     return stream.Readable.from(filterEventsAsyncGenerator(sourceData));
 };
 
-module.exports = { filterEvents };
+module.exports = { checkFirstChunk, filterEvents };
