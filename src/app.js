@@ -7,7 +7,6 @@ const { inspectFirstChunk } = require("./stream-utils");
 const { checkFirstChunk, filterEvents } = require("./process-ical");
 
 const app = express();
-app.set("view engine", "pug");
 
 /**
  * @param {(req: express.Request, res: express.Response, next: express.NextFunction) => Promise<void>} callback
@@ -45,7 +44,7 @@ app.use((err, _req, res, next) => {
     }
 
     res.status(400);
-    res.render("error", { message: err.message });
+    res.json({ title: "Error", message: err.message });
 });
 
 module.exports = { app };
