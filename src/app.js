@@ -14,6 +14,22 @@ const app = express();
  */
 const asyncWrap = (callback) => (req, res, next) => callback(req, res, next).catch(next);
 
+/**
+ * @param {Record<string, any>} sourceHeaders
+ * @returns {Record<string, any>}
+ */
+const getHeadersToForward = (sourceHeaders) => {
+    const newHeaders = {};
+
+    for (const headerName in sourceHeaders) {
+        if (!["connection", "transfer-encoding"].includes(headerName)) {
+            newHeaders[headerName] = sourceHeaders[headerName];
+        }
+    }
+
+    return newHeaders;
+};
+
 app.get(
     "/filter",
     asyncWrap(async (req, res, next) => {
@@ -40,7 +56,7 @@ app.get(
             return next(err);
         });
 
-        res.header(sourceHeaders);
+        res.header(getHeadersToForward(sourceHeaders));
         filteredData.pipe(res);
     })
 );
