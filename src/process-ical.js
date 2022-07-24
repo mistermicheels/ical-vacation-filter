@@ -16,9 +16,9 @@ const IS_EVENT_OUT_OF_OFFICE_REGEX = /^X-MICROSOFT-CDO-BUSYSTATUS:OOF$/m;
 /**
  * @param {string | Buffer} chunk
  */
-const checkFirstChunk = (chunk) => {
+const checkIcalDataStart = (chunk) => {
     if (!chunk.toString().startsWith(EXPECTED_CALENDAR_START_TEXT)) {
-        throw new BadRequestError("Invalid iCal data");
+        throw new BadRequestError("Invalid start of iCal data");
     }
 };
 
@@ -96,4 +96,4 @@ const filterEvents = (sourceData) => {
     return stream.Readable.from(filterEventsAsyncGenerator(sourceData));
 };
 
-module.exports = { checkFirstChunk, filterEvents };
+module.exports = { checkIcalDataStart, filterEvents };

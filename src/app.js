@@ -4,7 +4,7 @@ const { BadRequestError } = require("./error/BadRequestError");
 
 const { getSourceDataAndHeaders } = require("./source-data");
 const { inspectFirstChunk } = require("./stream-utils");
-const { checkFirstChunk, filterEvents } = require("./process-ical");
+const { checkIcalDataStart, filterEvents } = require("./process-ical");
 
 const app = express();
 
@@ -43,7 +43,7 @@ app.get(
         const { firstChunk, reconstructedFullStream } = await inspectFirstChunk(sourceData);
 
         try {
-            checkFirstChunk(firstChunk);
+            checkIcalDataStart(firstChunk);
         } catch (error) {
             reconstructedFullStream.destroy();
             throw error;
