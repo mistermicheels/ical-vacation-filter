@@ -15,7 +15,7 @@ const isSourceIcalFeed = (sourceHeaders) => {
 
 /**
  * @param {string} sourceUrl
- * @returns {Promise<{ sourceData: NodeJS.ReadableStream, sourceHeaders: Record<string, any> }>}
+ * @returns {Promise<{ sourceData: import("stream").Readable, sourceHeaders: Record<string, any> }>}
  */
 const getSourceDataAndHeaders = async (sourceUrl) => {
     /** @type {import("axios").AxiosRequestConfig} */

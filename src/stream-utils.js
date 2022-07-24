@@ -1,14 +1,18 @@
 const stream = require("stream");
 
 /**
- * @param {NodeJS.ReadableStream} inputStream
- * @returns {Promise<{ firstChunk: string | Buffer, reconstructedFullStream: NodeJS.ReadableStream }>}
+ * @param {stream.Readable} inputStream
+ * @returns {Promise<{ firstChunk: string | Buffer, reconstructedFullStream: stream.Readable }>}
  */
 const inspectFirstChunk = async (inputStream) => {
-    const reconstructedFullStream = new stream.PassThrough();
     const internalFullStream = new stream.PassThrough();
-    inputStream.pipe(reconstructedFullStream);
+    const reconstructedFullStream = new stream.PassThrough();
     inputStream.pipe(internalFullStream);
+    inputStream.pipe(reconstructedFullStream);
+
+    reconstructedFullStream.on("close", () => {
+        inputStream.destroy();
+    });
 
     for await (const chunk of internalFullStream) {
         inputStream.unpipe(internalFullStream);

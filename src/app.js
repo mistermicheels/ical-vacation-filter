@@ -25,10 +25,18 @@ app.get(
 
         const { sourceData, sourceHeaders } = await getSourceDataAndHeaders(sourceUrl);
         const { firstChunk, reconstructedFullStream } = await inspectFirstChunk(sourceData);
-        checkFirstChunk(firstChunk);
+
+        try {
+            checkFirstChunk(firstChunk);
+        } catch (error) {
+            reconstructedFullStream.destroy();
+            throw error;
+        }
+
         const filteredData = filterEvents(reconstructedFullStream);
 
         filteredData.on("error", (err) => {
+            reconstructedFullStream.destroy();
             return next(err);
         });
 
