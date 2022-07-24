@@ -7,14 +7,10 @@ const SOURCE_TIMEOUT_MILLISECONDS = SOURCE_TIMEOUT_SECONDS * 1000;
 
 /**
  * @param {import("axios").AxiosResponseHeaders} sourceHeaders
- * @param {string} sourceUrl
  */
-const checkSourceIsIcalFeed = (sourceHeaders, sourceUrl) => {
+const isSourceIcalFeed = (sourceHeaders) => {
     const sourceContentType = sourceHeaders["content-type"];
-
-    if (!sourceContentType?.startsWith("text/calendar")) {
-        throw new BadRequestError(`Source URL ${sourceUrl} does not seem to return an iCal feed`);
-    }
+    return sourceContentType?.startsWith("text/calendar");
 };
 
 /**
@@ -36,7 +32,12 @@ const getSourceDataAndHeaders = async (sourceUrl) => {
     });
 
     const { data: sourceData, headers: sourceHeaders } = sourceResponse;
-    checkSourceIsIcalFeed(sourceHeaders, sourceUrl);
+
+    if (!isSourceIcalFeed(sourceHeaders)) {
+        sourceData.destroy();
+        throw new BadRequestError(`Source URL ${sourceUrl} does not seem to return an iCal feed`);
+    }
+
     return { sourceData, sourceHeaders };
 };
 
