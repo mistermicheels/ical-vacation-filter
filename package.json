@@ -7,7 +7,7 @@
   "description": "Take an Outlook iCal feed and keep only the out-of-office events",
   "main": "src/index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=production nodemon src/index.js",
+    "start": "nodemon src/index.js",
     "performance-test:ical-data": "clinic doctor --on-port 'node performance-test --scenario icalData' -- node src/index.js",
     "performance-test:binary-data": "clinic doctor --on-port 'node performance-test --scenario binaryData' -- node src/index.js",
     "performance-test:binary-data-ical-header": "clinic doctor --on-port 'node performance-test --scenario binaryDataWithIcalHeader' -- node src/index.js",
@@ -27,7 +27,6 @@
     "autocannon": "^7.9.0",
     "clinic": "^11.1.2",
     "commander": "^9.4.0",
-    "cross-env": "^7.0.3",
     "ics": "^2.37.0",
     "nodemon": "^2.0.16",
     "random-words": "^1.2.0"
