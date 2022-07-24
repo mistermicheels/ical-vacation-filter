@@ -59,6 +59,7 @@ async function* filterEventsAsyncGenerator(sourceData) {
     for await (const chunk of sourceData) {
         unprocessedReceivedData = unprocessedReceivedData + chunk;
 
+        let processedEventsCurrentChunk = 0;
         let nextCompleteEvent = getNextCompleteEvent(unprocessedReceivedData);
 
         while (nextCompleteEvent) {
@@ -72,6 +73,13 @@ async function* filterEventsAsyncGenerator(sourceData) {
             }
 
             unprocessedReceivedData = dataAfterEvent;
+            processedEventsCurrentChunk++;
+
+            if (processedEventsCurrentChunk % 50 === 0) {
+                // break up the processing of longer chunks so we don't block the event loop for too long
+                await new Promise((resolve) => setTimeout(resolve));
+            }
+
             nextCompleteEvent = getNextCompleteEvent(unprocessedReceivedData);
         }
     }
