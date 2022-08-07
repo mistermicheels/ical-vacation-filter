@@ -1,6 +1,8 @@
 Project status:
 
--   🛑 Not actively maintained
+-   🔧 In maintenance mode
+    -   New features will not be added.
+    -   A best-effort attempt will be made to keep the current functionality working and to fix significant bugs.
 -   🔒 Not looking for code contributions from other developers
 
 # ical-vacation-filter
@@ -62,8 +64,3 @@ Example visual output:
 ![Example Clinic.js Doctor visual output](./img/clinic-doctor-visual-output-example.png)
 
 If you like to perform functional testing or other kinds of performance testing, you can expose the mock source servers for the different scenarios using the `mock-source-server:<SCENARIO>` npm scripts.
-
-## Suggestions for improvement
-
--   Add frontend that turns source feed URL into copyable filtered feed URL
--   Add automated tests
