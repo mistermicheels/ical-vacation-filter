@@ -22,7 +22,7 @@ const getHeadersToForward = (sourceHeaders) => {
     const newHeaders = {};
 
     for (const headerName in sourceHeaders) {
-        if (!["connection", "transfer-encoding"].includes(headerName)) {
+        if (!["connection", "content-length", "transfer-encoding"].includes(headerName)) {
             newHeaders[headerName] = sourceHeaders[headerName];
         }
     }
