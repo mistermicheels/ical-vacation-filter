@@ -9,7 +9,7 @@ Project status:
 
 Take an Outlook iCal feed and keep only the out-of-office events.
 
-Filtered feed URL: `https://ical-vacation-filter.herokuapp.com/filter?source=%source_feed_URL%`.
+Filtered feed URL: `https://ical-vacation-filter.fly.dev/filter?source=%source_feed_URL%`.
 
 It is recommended to encode the source feed URL using EncodeURIComponent.
 
