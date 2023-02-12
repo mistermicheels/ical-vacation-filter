@@ -8,6 +8,8 @@ const { checkIcalDataStart, filterEvents } = require("./process-ical");
 
 const app = express();
 
+const NOT_FORWARDED_HEADERS = ["connection", "content-length", "transfer-encoding"];
+
 /**
  * @param {(req: express.Request, res: express.Response, next: express.NextFunction) => Promise<void>} callback
  * @returns {express.RequestHandler}
@@ -22,7 +24,7 @@ const getHeadersToForward = (sourceHeaders) => {
     const newHeaders = {};
 
     for (const headerName in sourceHeaders) {
-        if (!["connection", "content-length", "transfer-encoding"].includes(headerName)) {
+        if (!NOT_FORWARDED_HEADERS.includes(headerName)) {
             newHeaders[headerName] = sourceHeaders[headerName];
         }
     }

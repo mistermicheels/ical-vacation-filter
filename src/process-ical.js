@@ -13,6 +13,8 @@ const EVENT_END_REGEX = /(?<=^END:VEVENT$)/m;
 
 const IS_EVENT_OUT_OF_OFFICE_REGEX = /^X-MICROSOFT-CDO-BUSYSTATUS:OOF$/m;
 
+const MAX_NUMBER_EVENTS_PROCESSED_SYNCHRONOUSLY = 50;
+
 /**
  * @param {string | Buffer} chunk
  */
@@ -75,7 +77,7 @@ async function* filterEventsAsyncGenerator(sourceData) {
             unprocessedReceivedData = dataAfterEvent;
             processedEventsCurrentChunk++;
 
-            if (processedEventsCurrentChunk % 50 === 0) {
+            if (processedEventsCurrentChunk % MAX_NUMBER_EVENTS_PROCESSED_SYNCHRONOUSLY === 0) {
                 // break up the processing of longer chunks so we don't block the event loop for too long
                 await new Promise((resolve) => setTimeout(resolve));
             }
