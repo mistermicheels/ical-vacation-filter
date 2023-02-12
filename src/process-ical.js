@@ -8,8 +8,8 @@ const EXPECTED_CALENDAR_START_TEXT = "BEGIN:VCALENDAR";
 // iCal feed does not start with BEGIN:VEVENT, so there will be a line break before the first BEGIN:VEVENT
 const EVENT_START_REGEX = /\r?\nBEGIN:VEVENT$/m;
 
-// use positive lookbehind so the actual matched position is the end of END:VEVENT
-const EVENT_END_REGEX = /(?<=^END:VEVENT$)/m;
+const EVENT_END_REGEX = /^END:VEVENT$/m;
+const EVENT_END_TEXT = "END:VEVENT";
 
 const IS_EVENT_OUT_OF_OFFICE_REGEX = /^X-MICROSOFT-CDO-BUSYSTATUS:OOF$/m;
 
@@ -38,7 +38,7 @@ const getNextCompleteEvent = (unprocessedReceivedData) => {
 
     // we only process complete events, so we can assume there is an event start before the event end
     const startIndex = unprocessedReceivedData.search(EVENT_START_REGEX);
-    const endIndex = indexNextEventEnd;
+    const endIndex = indexNextEventEnd + EVENT_END_TEXT.length;
     const eventData = unprocessedReceivedData.substring(startIndex, endIndex);
     const dataBeforeEvent = unprocessedReceivedData.substring(0, startIndex);
     const dataAfterEvent = unprocessedReceivedData.substring(endIndex);
