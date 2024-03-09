@@ -1,15 +1,13 @@
 Project status:
 
--   🔧 In maintenance mode
-    -   New features will not be added.
-    -   A best-effort attempt will be made to keep the current functionality working and to fix significant bugs.
+-   🛑 Not actively maintained
 -   🔒 Not looking for code contributions from other developers
 
 # ical-vacation-filter
 
 Take an Outlook iCal feed and keep only the out-of-office events.
 
-Filtered feed URL: `https://ical-vacation-filter.fly.dev/filter?source=%source_feed_URL%`.
+Filtered feed URL: `%app_URL%/filter?source=%source_feed_URL%`.
 
 It is recommended to encode the source feed URL using EncodeURIComponent.
 
